@@ -82,7 +82,7 @@ class APIGetToken(APIView):
         confirmation_code = serializer.validated_data['confirmation_code']
         username = serializer.validated_data['username']
         try:
-            user = User.objects.get(username=username)
+            user = get_object_or_404(User, username=username)
         except User.DoesNotExist:
             return Response(
                 {'username': 'Пользователя нет!'},
@@ -90,8 +90,10 @@ class APIGetToken(APIView):
             )
         if confirmation_code == user.confirmation_code:
             token = RefreshToken.for_user(user).access_token
-            return Response({'token': str(token)},
-                            status=status.HTTP_201_CREATED)
+            return Response(
+                {'token': str(token)},
+                status=status.HTTP_201_CREATED
+            )
         return Response(
             {'confirmation_code': 'Неверный код!'},
             status=status.HTTP_400_BAD_REQUEST

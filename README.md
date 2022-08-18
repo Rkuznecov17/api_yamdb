@@ -7,38 +7,57 @@
 
 Клонировать репозиторий и перейти в него в командной строке:
 
+```
 git clone https://github.com/olgawollny/api_yamdb.git
+```
 
+```
 cd api_yamdb
+```
 
 Cоздать и активировать виртуальное окружение:
 
+```
 python3 -m venv env
+```
 
+```
 source env/bin/activate
+```
 
+```
 python3 -m pip install --upgrade pip
+```
 
 Установить зависимости из файла requirements.txt:
 
+```
 pip install -r requirements.txt
+```
 
 Выполнить миграции:
 
+```
 python3 manage.py migrate
+```
 
 Запустить проект:
 
+```
 python3 manage.py runserver
 
+```
 ### Примеры запросов:
 
 Запрос на получение списка произведений:
 
+```
 GET http://127.0.0.1:8000/api/v1/titles/
+```
 
 Запрос на добавление произведения:
 
+```
 POST http://127.0.0.1:8000/api/v1/titles/
 
 {
@@ -49,15 +68,21 @@ POST http://127.0.0.1:8000/api/v1/titles/
     "category": "Категория"
 }
 
+```
+
 Запрос на получение списка категорий:
 
+```
 GET http://127.0.0.1:8000/api/v1/categories/
+```
 
 Запрос на добавление отзыва:
 
+```
 POST http://127.0.0.1:8000/api/v1/titles/1/reviews/
 
 {
     "text": "Текст отзыва",
     "score": 5,
 }
+

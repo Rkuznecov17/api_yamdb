@@ -1,15 +1,20 @@
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
-from rest_framework.generics import get_object_or_404
 from rest_framework.relations import SlugRelatedField
+from rest_framework.validators import UniqueTogetherValidator
 
 from reviews.models import Category, Comment, Genre, Review, Title
 
 
+class CurrentTitleDefault:
+    requires_context = True
+
+    def __call__(self, serlializer_field):
+        return serlializer_field.context['view'].kwargs['title_id']
+
+
 class ReviewSerializer(serializers.ModelSerializer):
-    title = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True,
+    title = serializers.HiddenField(
+        default=CurrentTitleDefault(),
     )
     author = serializers.SlugRelatedField(
         default=serializers.CurrentUserDefault(),
@@ -17,22 +22,15 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
-    def validate(self, data):
-        print(self.context)
-        request = self.context['request']
-        author = request.user
-        title_id = self.context['view'].kwargs.get('title_id')
-        title = get_object_or_404(Title, pk=title_id)
-        if request.method == 'POST':
-            if Review.objects.filter(title=title, author=author).exists():
-                raise ValidationError('На одно произведение'
-                                      'пользователь может '
-                                      'оставитьтолько один отзыв')
-        return data
-
     class Meta:
         model = Review
-        fields = '__all__'
+        fields = ('__all__')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Review.objects.all(),
+                fields=['title', 'author']
+            )
+        ]
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -61,11 +59,13 @@ class TitlesSerializer(serializers.ModelSerializer):
 class TitlesCreateSerializer(serializers.ModelSerializer):
     category = SlugRelatedField(
         queryset=Category.objects.all(),
-        slug_field='slug')
+        slug_field='slug'
+    )
     genre = SlugRelatedField(
         many=True,
         queryset=Genre.objects.all(),
-        slug_field='slug')
+        slug_field='slug'
+    )
 
     class Meta:
         model = Title

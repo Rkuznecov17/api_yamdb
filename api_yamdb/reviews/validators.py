@@ -1,6 +1,6 @@
 import datetime
 
-from django.core.validators import MaxValueValidator, RegexValidator
+from django.core.validators import MaxValueValidator
 
 
 def current_year():
@@ -9,6 +9,3 @@ def current_year():
 
 def max_value_current_year(value):
     return MaxValueValidator(current_year())(value)
-
-
-SLUG_REGEX = RegexValidator(r'^[\w-]+$')

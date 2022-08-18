@@ -13,7 +13,7 @@ router.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
                 r'/comments', CommentViewSet, basename='comments')
 router.register(r'categories', CategoryViewSet)
 router.register(r'genres', GenreViewSet)
-router.register(r'titles', TitlesViewSet)
+router.register(r'titles', TitlesViewSet, basename='titles')
 
 urlpatterns = [
     path('v1/', include(router.urls)),
